@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>EcoTech TGA — Lixo Eletrônico</title>
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <header class="app-header">
+        <div class="header-info">
+            <span class="badge">Tangará da Serra • MT</span>
+            <h1>EcoTech</h1>
+        </div>
+        <button id="btnInstall" class="btn-install hidden">Instalar App</button>
+    </header>
+
+    <main id="app-content">
+        <!-- ABA 1: INÍCIO / GUIA -->
+        <section id="tab-guia" class="tab-view active">
+            <div class="hero-card">
+                <h2>Descarte consciente de lixo eletrônico</h2>
+                <p>Celulares antigos, cabos, pilhas e placas contêm metais pesados que contaminam o solo e a água de
+                    Tangará da Serra se jogados no lixo comum.</p>
+            </div>
+
+            <h3>O que descartar nos pontos?</h3>
+            <div class="grid-cards">
+                <div class="info-card ok">
+                    <span class="tag">PODE</span>
+                    <h4>Cabos e Carregadores</h4>
+                    <p>Fios USB, fontes de notebook, extensões e adaptadores.</p>
+                </div>
+                <div class="info-card ok">
+                    <span class="tag">PODE</span>
+                    <h4>Celulares e Tablets</h4>
+                    <p>Aparelhos quebrados, baterias estufadas e telas.</p>
+                </div>
+                <div class="info-card ok">
+                    <span class="tag">PODE</span>
+                    <h4>Informática e Placas</h4>
+                    <p>Teclados, mouses, roteadores, HDs, memórias e fontes.</p>
+                </div>
+                <div class="info-card no">
+                    <span class="tag">NÃO PODE</span>
+                    <h4>Lixo Comum / Lâmpadas</h4>
+                    <p>Lâmpadas fluorescentes quebradas, lixo orgânico ou hospitalar.</p>
+                </div>
+            </div>
+
+            <div class="impact-box">
+                <h4>Por que reciclar?</h4>
+                <ul>
+                    <li><strong>1 pilha comum</strong> pode contaminar até 20 mil litros de água.</li>
+                    <li>Placas eletrônicas possuem ouro, cobre e alumínio reaproveitáveis.</li>
+                    <li>Evita o descarte irregular em terrenos baldios e córregos da cidade.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ABA 2: PONTOS DE COLETA EM TANGARÁ -->
+        <section id="tab-pontos" class="tab-view">
+            <h2>Pontos de Coleta — Tangará da Serra</h2>
+            <p class="subtitle">Locais para entrega voluntária de resíduos eletroeletrônicos na cidade:</p>
+
+            <div class="point-card">
+                <div class="point-header">
+                    <span class="point-type">Ponto Oficial / Público</span>
+                    <h3>SAMAE / Ecopontos Municipais</h3>
+                </div>
+                <p>Recebimento de pequenos volumes de eletroeletrônicos e resíduos domésticos nos setores da cidade
+                    (limite de 1m³ por CPF/dia).</p>
+                <a href="https://www.google.com/maps/search/SAMAE+Tangara+da+Serra+MT" target="_blank"
+                    class="btn-map">Abrir no Google Maps</a>
+            </div>
+
+            <div class="point-card">
+                <div class="point-header">
+                    <span class="point-type">Ponto Educacional / Parceiro</span>
+                    <h3>IFMT / UNEMAT / Escolas Parceiras</h3>
+                </div>
+                <p>Pontos de entrega voluntária vinculados às campanhas de educação ambiental e coleta seletiva (Recytec
+                    / instituições locais).</p>
+                <a href="https://www.google.com/maps/search/IFMT+Tangara+da+Serra+MT" target="_blank"
+                    class="btn-map">Abrir no Google Maps</a>
+            </div>
+
+            <div class="point-card">
+                <div class="point-header">
+                    <span class="point-type">Ponto Projeto EcoTech</span>
+                    <h3>Caixa Coletora — Polo / Parceiro Local</h3>
+                </div>
+                <p>Ponto temporário de arrecadação de cabos, pilhas, carregadores e pequenos periféricos para destinação
+                    ambientalmente correta.</p>
+                <a href="https://www.google.com/maps/search/Centro+Tangara+da+Serra+MT" target="_blank"
+                    class="btn-map">Ver Localização</a>
+            </div>
+        </section>
+
+        <!-- ABA 3: QUIZ EDUCATIVO -->
+        <section id="tab-quiz" class="tab-view">
+            <h2>Quiz EcoTech</h2>
+            <p class="subtitle">Teste seus conhecimentos sobre lixo eletrônico (5 perguntas rápidas):</p>
+
+            <div id="quiz-container" class="card-box">
+                <div id="quiz-progress">Pergunta 1 de 5</div>
+                <h3 id="quiz-question">Carregando...</h3>
+                <div id="quiz-options" class="options-list"></div>
+                <div id="quiz-feedback" class="feedback hidden"></div>
+                <button id="btn-next-question" class="btn-primary hidden">Próxima Pergunta</button>
+            </div>
+
+            <div id="quiz-result" class="card-box hidden">
+                <h3>Resultado Final</h3>
+                <p id="quiz-score-text"></p>
+                <button id="btn-restart-quiz" class="btn-primary">Refazer Quiz</button>
+            </div>
+        </section>
+
+        <!-- ABA 4: REGISTRO DE DESCARTE -->
+        <section id="tab-registro" class="tab-view">
+            <h2>Registrar Descarte</h2>
+            <p class="subtitle">Vai levar algum item ao ponto de coleta em Tangará da Serra? Registre aqui para
+                contabilizarmos o impacto do projeto:</p>
+
+            <form id="discard-form" class="card-box">
+                <label>Bairro em Tangará da Serra:</label>
+                <input type="text" id="bairro" placeholder="Ex: Centro, Vila Alta, Jardim Europa..." required />
+
+                <label>O que você vai descartar?</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="item" value="Cabos/Carregadores" /> Cabos e Carregadores</label>
+                    <label><input type="checkbox" name="item" value="Pilhas/Baterias" /> Pilhas e Baterias</label>
+                    <label><input type="checkbox" name="item" value="Celular/Tablet" /> Celular ou Tablet</label>
+                    <label><input type="checkbox" name="item" value="Periféricos/Placas" /> Mouse, Teclado ou
+                        Placas</label>
+                </div>
+
+                <label>Quantidade aproximada de peças:</label>
+                <input type="number" id="qtd" min="1" max="100" value="1" required />
+
+                <button type="submit" class="btn-primary">Confirmar Registro</button>
+            </form>
+
+            <div class="stats-card">
+                <h4>Impacto Registrado no App</h4>
+                <p><strong id="total-registros">0</strong> descartes registrados pela comunidade</p>
+                <p><strong id="total-pecas">0</strong> peças encaminhadas para descarte correto</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- NAVEGAÇÃO INFERIOR ESTILO APP -->
+    <nav class="bottom-nav">
+        <button class="nav-btn active" data-target="tab-guia">
+            <span>📘</span>
+            <small>Guia</small>
+        </button>
+        <button class="nav-btn" data-target="tab-pontos">
+            <span>📍</span>
+            <small>Pontos</small>
+        </button>
+        <button class="nav-btn" data-target="tab-quiz">
+            <span>🧠</span>
+            <small>Quiz</small>
+        </button>
+        <button class="nav-btn" data-target="tab-registro">
+            <span>♻️</span>
+            <small>Descartar</small>
+        </button>
+    </nav>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
