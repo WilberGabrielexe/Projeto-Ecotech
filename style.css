@@ -432,3 +432,8 @@ input[type="number"] {
 .legal-list strong {
     color: var(--text);
 }
+
+.nav-btn {
+    flex: 1;
+    /* restante das propriedades... */
+}
