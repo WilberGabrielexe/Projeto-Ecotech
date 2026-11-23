@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ecotech-tga-v8 ';
+const CACHE_NAME = 'ecotech-tga-v9 ';
 const ASSETS = ['./', './index.html', './style.css', './app.js', './manifest.json'];
 self.addEventListener('fetch', (e) => {
     if (!e.request.url.startsWith(self.location.origin)) return;
