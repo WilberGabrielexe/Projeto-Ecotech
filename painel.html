@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <title>Acesso Restrito — Painel EcoTech TGA</title>
+    <style>
+        :root {
+            --bg: #0f172a;
+            --surface: #1e293b;
+            --surface-alt: #0b1220;
+            --primary: #10b981;
+            --primary-soft: rgba(16, 185, 129, 0.15);
+            --danger: #ef4444;
+            --danger-soft: rgba(239, 68, 68, 0.14);
+            --warning: #f59e0b;
+            --text: #f8fafc;
+            --muted: #94a3b8;
+            --border: #334155;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* ================= TELA DE LOGIN ================= */
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at top, #064e3b 0%, var(--bg) 55%);
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 16px;
+            padding: 32px 28px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .login-badge {
+            display: inline-block;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.72rem;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .login-card h1 {
+            font-size: 1.5rem;
+            margin-bottom: 6px;
+        }
+
+        .login-sub {
+            font-size: 0.88rem;
+            color: var(--muted);
+            margin-bottom: 22px;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.84rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-control {
+            width: 100%;
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.15s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+        }
+
+        .toggle-pass {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* CAMPO HONEYPOT ANTI-SPAM (INVISÍVEL PARA HUMANOS) */
+        .hp-field {
+            position: absolute;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .captcha-box {
+            background: var(--surface-alt);
+            border: 1px dashed var(--warning);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 16px;
+        }
+
+        .captcha-box label {
+            color: #fbbf24;
+            font-size: 0.82rem;
+        }
+
+        .alert-box {
+            padding: 11px 14px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            background: var(--danger-soft);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+        }
+
+        .btn-login {
+            width: 100%;
+            background: var(--primary);
+            color: #022c22;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.98rem;
+            font-weight: 800;
+            cursor: pointer;
+            transition: filter 0.15s ease;
+        }
+
+        .btn-login:hover:not(:disabled) {
+            filter: brightness(1.08);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .login-footer {
+            margin-top: 20px;
+            padding-top: 14px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.78rem;
+            color: var(--muted);
+        }
+
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* ================= PAINEL ADMINISTRATIVO ================= */
+        #dashboard-screen {
+            padding-bottom: 40px;
+        }
+
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-inner {
+            max-width: 1040px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            font-size: 0.72rem;
+            font-weight: 800;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        header h1 {
+            font-size: 1.4rem;
+            margin-top: 2px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: #022c22;
+            border: none;
+            padding: 9px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn:hover {
+            filter: brightness(1.08);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            background: var(--border);
+        }
+
+        .btn-danger {
+            background: var(--danger-soft);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.35);
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.25);
+        }
+
+        main {
+            max-width: 1040px;
+            margin: 24px auto 0;
+            padding: 0 20px;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .kpi-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--primary);
+            border-radius: 12px;
+            padding: 18px 20px;
+        }
+
+        .kpi-label {
+            font-size: 0.82rem;
+            color: var(--muted);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        .kpi-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text);
+            margin-top: 6px;
+        }
+
+        .kpi-sub {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-top: 4px;
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 720px) {
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel-box {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .panel-box h2 {
+            font-size: 1.05rem;
+            margin-bottom: 14px;
+            color: var(--text);
+        }
+
+        .bar-item {
+            margin-bottom: 12px;
+        }
+
+        .bar-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 5px;
+            color: var(--text);
+        }
+
+        .bar-header span:last-child {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .bar-track {
+            width: 100%;
+            height: 8px;
+            background: var(--surface-alt);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .bar-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 6px;
+            transition: width 0.3s ease;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+
+        .search-input {
+            background: var(--surface-alt);
+            border: 1px solid var(--border);
+            color: var(--text);
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 0.88rem;
+            min-width: 240px;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th,
+        td {
+            text-align: left;
+            padding: 12px 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            color: var(--muted);
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--surface-alt);
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .pill {
+            display: inline-block;
+            background: var(--primary-soft);
+            color: var(--primary);
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .status-msg {
+            text-align: center;
+            padding: 28px;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        @media print {
+            body {
+                background: #ffffff;
+                color: #0f172a;
+            }
+
+            #login-screen,
+            .actions,
+            .search-input {
+                display: none !important;
+            }
+
+            header {
+                position: static;
+                background: #ffffff;
+                border-bottom: 2px solid #10b981;
+            }
+
+            .kpi-card,
+            .panel-box {
+                background: #f8fafc;
+                border: 1px solid #cbd5e1;
+                color: #0f172a;
+            }
+
+            .kpi-value,
+            .panel-box h2,
+            .bar-header {
+                color: #0f172a;
+            }
+
+            th {
+                background: #e2e8f0;
+                color: #0f172a;
+            }
+
+            td {
+                border-bottom: 1px solid #cbd5e1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ================= TELA DE AUTENTICAÇÃO ================= -->
+    <section id="login-screen" class="login-wrapper">
+        <div class="login-card">
+            <span class="login-badge">🔒 Área Administrativa</span>
+            <h1>Painel EcoTech TGA</h1>
+            <p class="login-sub">Insira suas credenciais para visualizar os registros de descarte de Tangará da Serra.
+            </p>
+
+            <div id="login-alert" class="alert-box hidden"></div>
+
+            <form id="login-form" autocomplete="off">
+                <!-- Honeypot anti-spam (bots preenchem automaticamente, humanos não veem) -->
+                <div class="hp-field" aria-hidden="true">
+                    <label for="website_confirm">Não preencha este campo</label>
+                    <input type="text" id="website_confirm" name="website_confirm" tabindex="-1" autocomplete="off" />
+                </div>
+
+                <div class="form-group">
+                    <label for="login-user">Usuário</label>
+                    <input type="text" id="login-user" class="form-control" placeholder="Digite o usuário" required />
+                </div>
+
+                <div class="form-group">
+                    <label for="login-pass">Senha</label>
+                    <div class="input-wrap">
+                        <input type="password" id="login-pass" class="form-control" placeholder="Digite a senha"
+                            required />
+                        <button type="button" id="btn-toggle-pass" class="toggle-pass">Mostrar</button>
+                    </div>
+                </div>
+
+                <!-- Desafio matemático anti-bot ativado após falhas -->
+                <div id="captcha-box" class="captcha-box hidden">
+                    <label id="captcha-label" for="captcha-answer">Verificação de segurança:</label>
+                    <input type="number" id="captcha-answer" class="form-control" placeholder="Resultado da soma" />
+                </div>
+
+                <button type="submit" id="btn-submit-login" class="btn-login">Entrar no Painel</button>
+            </form>
+
+            <div class="login-footer">
+                <span>Proteção anti-brute-force ativa</span>
+                <a href="index.html">← Voltar ao App</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ================= PAINEL PROTEGIDO ================= -->
+    <div id="dashboard-screen" class="hidden">
+        <header>
+            <div class="header-inner">
+                <div>
+                    <span class="badge">Monitoramento Extensionista • Tangará da Serra - MT</span>
+                    <h1>Painel EcoTech TGA</h1>
+                </div>
+                <div class="actions">
+                    <button class="btn" onclick="carregarDados()">🔄 Atualizar</button>
+                    <button class="btn btn-outline" onclick="window.print()">🖨️ Exportar PDF</button>
+                    <button class="btn btn-danger" onclick="encerrarSessao()">Sair</button>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Descartes Registrados</div>
+                    <div class="kpi-value" id="kpi-registros">—</div>
+                    <div class="kpi-sub">Solicitações enviadas pela comunidade</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Total de Peças</div>
+                    <div class="kpi-value" id="kpi-pecas">—</div>
+                    <div class="kpi-sub">Itens encaminhados para triagem</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Bairros Alcançados</div>
+                    <div class="kpi-value" id="kpi-bairros">—</div>
+                    <div class="kpi-sub">Regiões participantes em Tangará</div>
+                </div>
+            </section>
+
+            <section class="analytics-grid">
+                <div class="panel-box">
+                    <h2>📦 Materiais Mais Registrados</h2>
+                    <div id="chart-materiais">
+                        <p class="status-msg">Carregando indicadores...</p>
+                    </div>
+                </div>
+                <div class="panel-box">
+                    <h2>📍 Participação por Bairro</h2>
+                    <div id="chart-bairros">
+                        <p class="status-msg">Carregando bairros...</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel-box">
+                <div class="table-header">
+                    <h2>📋 Histórico de Requisições Recebidas</h2>
+                    <input type="text" id="filtro" class="search-input" placeholder="Filtrar por bairro ou item..."
+                        oninput="filtrarTabela()" />
+                </div>
+
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data / Hora</th>
+                                <th>Bairro</th>
+                                <th>Itens Descartados</th>
+                                <th>Quantidade</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tabela-corpo">
+                            <tr>
+                                <td colspan="4" class="status-msg">Sincronizando com o Google Sheets...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyVTZ4cJou_Ewlf6inJYzIhCHweU7HN-sXzA4SWSY4LX57hU9tX_LOWfz5EiU9DQX0PxQ/exec";
+
+        // ================= CAMADA DE SEGURANÇA & ANTI-SPAM =================
+        const AUTH_STORAGE_KEY = "ecotech_auth_guard_v1";
+        const SESSION_KEY = "ecotech_panel_session";
+        const PAGE_LOAD_TIME = Date.now();
+
+        // Vetor ofuscado com salt dinâmico (evita credencial em texto puro no código-fonte)
+        const _uVec = [111, 72, 67, 89, 75, 76, 88, 3, 3];
+        const _pVec = [111, 72, 67, 89, 75, 76, 88, 3, 3];
+        const _kSeed = 42;
+
+        let captchaExpected = null;
+        let lockTimerInterval = null;
+
+        function getGuardState() {
+            try {
+                return JSON.parse(localStorage.getItem(AUTH_STORAGE_KEY)) || { fails: 0, lockUntil: 0 };
+            } catch {
+                return { fails: 0, lockUntil: 0 };
+            }
+        }
+
+        function saveGuardState(state) {
+            localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(state));
+        }
+
+        function showAlert(msg) {
+            const box = document.getElementById("login-alert");
+            box.textContent = msg;
+            box.classList.remove("hidden");
+        }
+
+        function hideAlert() {
+            document.getElementById("login-alert").classList.add("hidden");
+        }
+
+        function gerarDesafioCaptcha() {
+            const a = Math.floor(Math.random() * 9) + 2;
+            const b = Math.floor(Math.random() * 9) + 1;
+            captchaExpected = a + b;
+            document.getElementById("captcha-label").textContent = `Verificação anti-robô: quanto é ${a} + ${b}?`;
+            document.getElementById("captcha-answer").value = "";
+            document.getElementById("captcha-answer").required = true;
+            document.getElementById("captcha-box").classList.remove("hidden");
+        }
+
+        function verificarBloqueioAtivo() {
+            const state = getGuardState();
+            const btn = document.getElementById("btn-submit-login");
+
+            if (state.fails >= 2 && captchaExpected === null) {
+                gerarDesafioCaptcha();
+            }
+
+            if (state.lockUntil > Date.now()) {
+                btn.disabled = true;
+                if (lockTimerInterval) clearInterval(lockTimerInterval);
+
+                const atualizarContador = () => {
+                    const restante = Math.ceil((state.lockUntil - Date.now()) / 1000);
+                    if (restante <= 0) {
+                        clearInterval(lockTimerInterval);
+                        btn.disabled = false;
+                        hideAlert();
+                        gerarDesafioCaptcha();
+                        return;
+                    }
+                    showAlert(`Muitas tentativas incorretas. Acesso bloqueado temporariamente por ${restante}s.`);
+                };
+
+                atualizarContador();
+                lockTimerInterval = setInterval(atualizarContador, 1000);
+                return true;
+            }
+
+            btn.disabled = false;
+            return false;
+        }
+
+        // Comparação criptográfica via Web Crypto (SHA-256) em tempo constante
+        async function sha256Hex(texto) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode("EcoTechTGA::2026::" + texto);
+            const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+            return Array.from(new Uint8Array(hashBuffer))
+                .map(b => b.toString(16).padStart(2, "0"))
+                .join("");
+        }
+
+        function constantTimeEqual(a, b) {
+            if (a.length !== b.length) return false;
+            let diff = 0;
+            for (let i = 0; i < a.length; i++) {
+                diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
+            }
+            return diff === 0;
+        }
+
+        function decodeRef(vec) {
+            return vec.map((val, idx) => String.fromCharCode(val ^ (_kSeed + idx))).join("");
+        }
+
+        async function validarCredenciais(usuarioDigitado, senhaDigitada) {
+            const [hashUserIn, hashPassIn, hashUserRef, hashPassRef] = await Promise.all([
+                sha256Hex(usuarioDigitado),
+                sha256Hex(senhaDigitada),
+                sha256Hex(decodeRef(_uVec)),
+                sha256Hex(decodeRef(_pVec))
+            ]);
+            return constantTimeEqual(hashUserIn, hashUserRef) && constantTimeEqual(hashPassIn, hashPassRef);
+        }
+
+        function liberarPainel() {
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("dashboard-screen").classList.remove("hidden");
+            carregarDados();
+        }
+
+        function encerrarSessao() {
+            sessionStorage.removeItem(SESSION_KEY);
+            document.getElementById("dashboard-screen").classList.add("hidden");
+            document.getElementById("login-screen").classList.remove("hidden");
+            document.getElementById("login-form").reset();
+            hideAlert();
+        }
+
+        // Mostrar / Ocultar senha
+        document.getElementById("btn-toggle-pass").addEventListener("click", function () {
+            const input = document.getElementById("login-pass");
+            const isPass = input.type === "password";
+            input.type = isPass ? "text" : "password";
+            this.textContent = isPass ? "Ocultar" : "Mostrar";
+        });
+
+        // Submissão do formulário de login
+        document.getElementById("login-form").addEventListener("submit", async (e) => {
+            e.preventDefault();
+
+            if (verificarBloqueioAtivo()) return;
+
+            const btn = document.getElementById("btn-submit-login");
+            const honeypot = document.getElementById("website_confirm").value;
+            const tempoPreenchimento = Date.now() - PAGE_LOAD_TIME;
+
+            // 1. Regra Anti-Spam: bloqueia preenchimento de honeypot ou envio instantâneo de robô (< 1.2s)
+            if (honeypot !== "" || tempoPreenchimento < 1200) {
+                const state = getGuardState();
+                state.fails += 3;
+                state.lockUntil = Date.now() + 5 * 60 * 1000;
+                saveGuardState(state);
+                verificarBloqueioAtivo();
+                return;
+            }
+
+            // 2. Regra Anti-Bot: valida desafio matemático se ativo
+            if (captchaExpected !== null) {
+                const resp = parseInt(document.getElementById("captcha-answer").value, 10);
+                if (resp !== captchaExpected) {
+                    showAlert("Resposta da verificação anti-robô incorreta. Tente novamente.");
+                    gerarDesafioCaptcha();
+                    return;
+                }
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Verificando...";
+
+            // 3. Atraso intencional de 800ms para frear ataques automatizados de força bruta
+            await new Promise(resolve => setTimeout(resolve, 800));
+
+            const user = document.getElementById("login-user").value.trim();
+            const pass = document.getElementById("login-pass").value;
+            const valido = await validarCredenciais(user, pass);
+
+            if (valido) {
+                saveGuardState({ fails: 0, lockUntil: 0 });
+                sessionStorage.setItem(SESSION_KEY, "authenticated");
+                btn.disabled = false;
+                btn.textContent = "Entrar no Painel";
+                hideAlert();
+                liberarPainel();
+            } else {
+                const state = getGuardState();
+                state.fails += 1;
+
+                // Bloqueio progressivo: 3 erros = 60s | 5+ erros = 15 minutos
+                if (state.fails >= 5) {
+                    state.lockUntil = Date.now() + 15 * 60 * 1000;
+                } else if (state.fails >= 3) {
+                    state.lockUntil = Date.now() + 60 * 1000;
+                }
+
+                saveGuardState(state);
+                btn.disabled = false;
+                btn.textContent = "Entrar no Painel";
+
+                if (!verificarBloqueioAtivo()) {
+                    const restantes = 3 - state.fails;
+                    if (state.fails >= 2) gerarDesafioCaptcha();
+                    showAlert(
+                        restantes > 0
+                            ? `Usuário ou senha inválidos. Restam ${restantes} tentativa(s) antes do bloqueio.`
+                            : `Usuário ou senha inválidos.`
+                    );
+                }
+            }
+        });
+
+        // Inicialização da sessão
+        if (sessionStorage.getItem(SESSION_KEY) === "authenticated") {
+            liberarPainel();
+        } else {
+            verificarBloqueioAtivo();
+        }
+
+        // ================= LÓGICA DO PAINEL DE DADOS =================
+        let registrosGlobais = [];
+
+        function escaparHTML(texto) {
+            const div = document.createElement("div");
+            div.textContent = texto;
+            return div.innerHTML;
+        }
+
+        function renderizarBarras(containerId, mapaContagem, totalBase) {
+            const container = document.getElementById(containerId);
+            const entradas = Object.entries(mapaContagem).sort((a, b) => b[1] - a[1]).slice(0, 6);
+
+            if (entradas.length === 0) {
+                container.innerHTML = '<p class="status-msg">Nenhum dado registrado ainda.</p>';
+                return;
+            }
+
+            container.innerHTML = entradas.map(([nome, valor]) => {
+                const pct = totalBase > 0 ? Math.min(100, Math.round((valor / totalBase) * 100)) : 0;
+                return `
+          <div class="bar-item">
+            <div class="bar-header">
+              <span>${escaparHTML(nome)}</span>
+              <span>${valor} (${pct}%)</span>
+            </div>
+            <div class="bar-track">
+              <div class="bar-fill" style="width: ${pct}%"></div>
+            </div>
+          </div>
+        `;
+            }).join("");
+        }
+
+        function renderizarTabela(lista) {
+            const tbody = document.getElementById("tabela-corpo");
+
+            if (lista.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="status-msg">Nenhum registro encontrado.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = lista.map(item => `
+        <tr>
+          <td>${escaparHTML(item.data)}</td>
+          <td><strong>${escaparHTML(item.bairro)}</strong></td>
+          <td>${escaparHTML(item.itens)}</td>
+          <td><span class="pill">${item.qtd} ${item.qtd === 1 ? "peça" : "peças"}</span></td>
+        </tr>
+      `).join("");
+        }
+
+        function filtrarTabela() {
+            const termo = document.getElementById("filtro").value.toLowerCase().trim();
+            if (!termo) {
+                renderizarTabela(registrosGlobais);
+                return;
+            }
+            const filtrados = registrosGlobais.filter(r =>
+                r.bairro.toLowerCase().includes(termo) ||
+                r.itens.toLowerCase().includes(termo) ||
+                r.data.toLowerCase().includes(termo)
+            );
+            renderizarTabela(filtrados);
+        }
+
+        async function carregarDados() {
+            const tbody = document.getElementById("tabela-corpo");
+            tbody.innerHTML = '<tr><td colspan="4" class="status-msg">Atualizando registros...</td></tr>';
+
+            try {
+                const res = await fetch(GOOGLE_SHEETS_URL);
+                const data = await res.json();
+
+                registrosGlobais = Array.isArray(data.lista) ? data.lista : [];
+
+                document.getElementById("kpi-registros").textContent = data.registros ?? registrosGlobais.length;
+                document.getElementById("kpi-pecas").textContent = data.pecas ?? 0;
+
+                const mapaBairros = {};
+                const mapaMateriais = {};
+                let totalMencoesMateriais = 0;
+
+                registrosGlobais.forEach(reg => {
+                    const bairroNorm = reg.bairro.trim() || "Não informado";
+                    mapaBairros[bairroNorm] = (mapaBairros[bairroNorm] || 0) + 1;
+
+                    reg.itens.split(",").forEach(cat => {
+                        const c = cat.trim();
+                        if (c) {
+                            mapaMateriais[c] = (mapaMateriais[c] || 0) + 1;
+                            totalMencoesMateriais++;
+                        }
+                    });
+                });
+
+                document.getElementById("kpi-bairros").textContent = Object.keys(mapaBairros).length;
+
+                renderizarBarras("chart-materiais", mapaMateriais, totalMencoesMateriais);
+                renderizarBarras("chart-bairros", mapaBairros, registrosGlobais.length);
+                renderizarTabela(registrosGlobais);
+            } catch (err) {
+                tbody.innerHTML = '<tr><td colspan="4" class="status-msg">Erro ao conectar com a planilha. Verifique a implantação do Apps Script.</td></tr>';
+            }
+        }
+    </script>
+</body>
+
+</html>
