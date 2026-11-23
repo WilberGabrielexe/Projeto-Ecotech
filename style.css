@@ -482,3 +482,16 @@ input[type="number"] {
     border-color: var(--primary);
     color: var(--primary);
 }
+
+CSS .brand-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand-logo {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}

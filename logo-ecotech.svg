@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <defs>
+    <linearGradient id="ecoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="120" height="120" rx="28" fill="#0f172a" />
+  <rect x="3" y="3" width="114" height="114" rx="25" fill="none" stroke="#10b981" stroke-width="3" stroke-opacity="0.45" />
+
+  
+  <path d="M86 30 C54 30, 32 48, 32 76 C32 82, 34 87, 37 91 C56 89, 86 73, 86 30 Z" fill="url(#ecoGrad)" />
+
+  
+  <path d="M35 90 L64 60" stroke="#0f172a" stroke-width="4.5" stroke-linecap="round" />
+  <path d="M53 71 L53 56" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M62 62 L75 62" stroke="#0f172a" stroke-width="3.5" stroke-linecap="round" />
+
+  
+  <circle cx="66" cy="58" r="4" fill="#0f172a" />
+  <circle cx="53" cy="54" r="3.5" fill="#0f172a" />
+  <circle cx="77" cy="62" r="3.5" fill="#0f172a" />
+</svg>
