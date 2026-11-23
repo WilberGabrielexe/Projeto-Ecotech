@@ -455,3 +455,30 @@ input[type="number"] {
     color: var(--primary);
     font-weight: 700;
 }
+
+/* BOTÃO DE ACESSO AO PAINEL NO CABEÇALHO */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-panel {
+    background: #0f172a;
+    color: var(--text);
+    border: 1px solid #334155;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.btn-panel:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}

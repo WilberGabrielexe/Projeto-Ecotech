@@ -1,5 +1,9 @@
-const CACHE_NAME = 'ecotech-tga-v7';
+const CACHE_NAME = 'ecotech-tga-v8 ';
 const ASSETS = ['./', './index.html', './style.css', './app.js', './manifest.json'];
+self.addEventListener('fetch', (e) => {
+    if (!e.request.url.startsWith(self.location.origin)) return;
+    // restante do seu código de cache...
+});
 
 self.addEventListener('install', (e) => {
     self.skipWaiting();
