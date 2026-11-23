@@ -1,13 +1,22 @@
+// Cole aqui a URL gerada no Google Apps Script (terminada em /exec)
+const GOOGLE_SHEETS_URL = "https://script.google.com/macros/s/AKfycbyVTZ4cJou_Ewlf6inJYzIhCHweU7HN-sXzA4SWSY4LX57hU9tX_LOWfz5EiU9DQX0PxQ/exec";
+
 // Navegação entre abas
 const navButtons = document.querySelectorAll('.nav-btn');
 const tabViews = document.querySelectorAll('.tab-view');
 
-navButtons.forEach(btn => {
+navButtons.forEach((btn) => {
     btn.addEventListener('click', () => {
-        navButtons.forEach(b => b.classList.remove('active'));
-        tabViews.forEach(v => v.classList.remove('active'));
+        const targetId = btn.getAttribute('data-target');
+        const targetSection = document.getElementById(targetId);
+        if (!targetSection) return;
+
+        navButtons.forEach((b) => b.classList.remove('active'));
+        tabViews.forEach((v) => v.classList.remove('active'));
+
         btn.classList.add('active');
-        document.getElementById(btn.dataset.target).classList.add('active');
+        targetSection.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     });
 });
 
@@ -38,10 +47,10 @@ const questions = [
         exp: "Placas de circuito contêm ouro, prata, cobre e alumínio que voltam para a indústria."
     },
     {
-        q: "Em Tangará da Serra, onde podemos encaminhar pequenos volumes de e-lixo?",
-        options: ["Em qualquer terreno baldio", "Nos Ecopontos / SAMAE ou pontos de coleta parceiros", "No ralo da pia", "Junto com o lixo orgânico"],
+        q: "Em Tangará da Serra, onde podemos encaminhar resíduos eletrônicos para destinação correta?",
+        options: ["Em qualquer terreno baldio", "Na COOPERTAN, nos Ecopontos do SAMAE ou pontos parceiros", "No ralo da pia", "Junto com o lixo orgânico"],
         answer: 1,
-        exp: "Os pontos oficiais garantem a triagem e a destinação ambientalmente adequada."
+        exp: "Os pontos oficiais e cooperativas garantem a triagem e a destinação ambientalmente adequada."
     }
 ];
 
@@ -76,7 +85,7 @@ function loadQuestion() {
 function selectAnswer(idx, btnSelected) {
     const item = questions[currentQ];
     const allBtns = qOptions.querySelectorAll('.option-btn');
-    allBtns.forEach(b => b.disabled = true);
+    allBtns.forEach((b) => (b.disabled = true));
 
     if (idx === item.answer) {
         btnSelected.classList.add('correct');
@@ -114,30 +123,74 @@ document.getElementById('btn-restart-quiz').addEventListener('click', () => {
 
 loadQuestion();
 
-// Registro de Descarte (LocalStorage para demonstração imediata)
+// Registro de Descarte + Sincronização com Google Sheets
 const form = document.getElementById('discard-form');
 const totalRegEl = document.getElementById('total-registros');
 const totalPecasEl = document.getElementById('total-pecas');
 
-function updateStats() {
-    const stats = JSON.parse(localStorage.getItem('ecotech_stats') || '{"registros": 12, "pecas": 38}');
-    totalRegEl.textContent = stats.registros;
-    totalPecasEl.textContent = stats.pecas;
+function renderStats(registros, pecas) {
+    totalRegEl.textContent = registros;
+    totalPecasEl.textContent = pecas;
 }
 
-form.addEventListener('submit', (e) => {
+async function loadStats() {
+    const localStats = JSON.parse(localStorage.getItem('ecotech_stats') || '{"registros": 0, "pecas": 0}');
+    renderStats(localStats.registros, localStats.pecas);
+
+    if (!GOOGLE_SHEETS_URL.startsWith("https://")) return;
+
+    try {
+        const res = await fetch(GOOGLE_SHEETS_URL);
+        const data = await res.json();
+        if (typeof data.registros === "number") {
+            localStorage.setItem('ecotech_stats', JSON.stringify(data));
+            renderStats(data.registros, data.pecas);
+        }
+    } catch (err) {
+        // Mantém os dados locais caso esteja offline
+    }
+}
+
+form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    const btnSubmit = form.querySelector('button[type="submit"]');
+    const textoOriginal = btnSubmit.textContent;
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Enviando registro...";
+
+    const bairro = document.getElementById('bairro').value.trim();
     const qtd = parseInt(document.getElementById('qtd').value, 10) || 1;
-    const stats = JSON.parse(localStorage.getItem('ecotech_stats') || '{"registros": 12, "pecas": 38}');
+    const itensMarcados = Array.from(document.querySelectorAll('input[name="item"]:checked'))
+        .map((el) => el.value);
+    const itens = itensMarcados.length > 0 ? itensMarcados.join(", ") : "Não especificado";
+
+    if (GOOGLE_SHEETS_URL.startsWith("https://")) {
+        try {
+            await fetch(GOOGLE_SHEETS_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ bairro, itens, qtd })
+            });
+        } catch (err) {
+            console.error("Erro ao enviar para planilha:", err);
+        }
+    }
+
+    const stats = JSON.parse(localStorage.getItem('ecotech_stats') || '{"registros": 0, "pecas": 0}');
     stats.registros += 1;
     stats.pecas += qtd;
     localStorage.setItem('ecotech_stats', JSON.stringify(stats));
-    updateStats();
+    renderStats(stats.registros, stats.pecas);
+
     form.reset();
-    alert('Descarte registrado com sucesso! Obrigado por contribuir com Tangará da Serra.');
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = textoOriginal;
+    alert('Descarte registrado com sucesso na planilha do Projeto EcoTech!');
 });
 
-updateStats();
+loadStats();
 
 // PWA Service Worker & Instalação
 if ('serviceWorker' in navigator) {
